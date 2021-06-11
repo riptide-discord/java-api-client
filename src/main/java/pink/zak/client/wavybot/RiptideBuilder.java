@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pink.zak.client.wavybot.config.AuthConfig;
 
-import java.net.Authenticator;
 import java.net.http.HttpClient;
 
 public class RiptideBuilder {
@@ -27,12 +26,13 @@ public class RiptideBuilder {
         return new RiptideBuilder(url, username, password);
     }
 
+    @NotNull
     public Riptide build() {
         if (this.httpClientBuilder == null)
             this.httpClientBuilder = HttpClient.newBuilder();
 
         this.httpClientBuilder.authenticator(new AuthConfig(this.username, this.password));
 
-        return new Riptide(this.httpClientBuilder.build(), this.url);
+        return new RiptideImpl(this.httpClientBuilder.build(), this.url);
     }
 }
