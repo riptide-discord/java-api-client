@@ -9,20 +9,26 @@ import java.util.function.Consumer;
 
 public class Route {
 
-    public static class Users {
-        public static final Route GET_USER = new Route(Method.GET, "/user/{discordId}/get");
-        public static final Route GET_MUSIC_DATA = new Route(Method.GET, "/user/{discordId}/getMusicData");
-        public static final Route GET_WAVY = new Route(Method.GET, "/user/{discordId}/getWavy");
-        public static final Route LINK_WAVY = new Route(Method.GET, "/user/{discordId}/linkWavy");
-        public static final Route UPDATE_LISTENS = new Route(Method.GET, "/user/{discordId}/updateListens");
+    public static class Leaderboards {
+        public static final Route GET_PARTIAL_LEADERBOARD = new Route(Method.GET, "/leaderboard/{discordId}/getPartial");
+    }
+
+    public static class Spotify {
+        public static final Route GET_SPOTIFY_ALBUM = new Route(Method.GET, "/spotify/album/get");
+        public static final Route GET_SPOTIFY_ARTIST = new Route(Method.GET, "/spotify/artist/get");
+        public static final Route GET_SPOTIFY_TRACK = new Route(Method.GET, "/spotify/track/get");
     }
 
     public static class Tasks {
         public static final Route GET_TASK = new Route(Method.GET, "/task/{uuid}/get");
     }
 
-    public static class Leaderboards {
-        public static final Route GET_PARTIAL_LEADERBOARD = new Route(Method.GET, "/leaderboard/{discordId}/getPartial");
+    public static class Users {
+        public static final Route GET_USER = new Route(Method.GET, "/user/{discordId}/get");
+        public static final Route GET_MUSIC_DATA = new Route(Method.GET, "/user/{discordId}/getMusicData");
+        public static final Route GET_WAVY = new Route(Method.GET, "/user/{discordId}/getWavy");
+        public static final Route LINK_WAVY = new Route(Method.GET, "/user/{discordId}/linkWavy");
+        public static final Route UPDATE_LISTENS = new Route(Method.GET, "/user/{discordId}/updateListens");
     }
 
     @NotNull
