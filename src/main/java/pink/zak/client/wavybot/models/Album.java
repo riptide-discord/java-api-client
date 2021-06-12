@@ -3,6 +3,7 @@ package pink.zak.client.wavybot.models;
 import com.wrapper.spotify.enums.AlbumType;
 import com.wrapper.spotify.enums.ReleaseDatePrecision;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Date;
 import java.util.List;
@@ -26,15 +27,21 @@ public interface Album {
 
     long getLastSpotifyUpdate();
 
+    @Nullable
     AlbumType getAlbumType();
 
+    @Nullable
     String getLabel();
 
+    @Nullable
     Date getReleaseDate();
 
+    @Nullable
     ReleaseDatePrecision getReleaseDatePrecision();
 
+    @Nullable
     String[] getGenres();
 
+    @Nullable
     List<String> getTrackIds();
 }

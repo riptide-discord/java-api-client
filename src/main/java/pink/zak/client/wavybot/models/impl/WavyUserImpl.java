@@ -18,7 +18,8 @@ public class WavyUserImpl implements WavyUser {
     private final String spotifyDisplayName;
     private final long lastUpdate;
 
-    public WavyUserImpl(@NotNull UUID uuid, long discordId, @NotNull String username, @Nullable String spotifyId, @Nullable String spotifyDisplayName, long lastUpdate) {
+    public WavyUserImpl(@NotNull UUID uuid, long discordId, @NotNull String username, @Nullable String spotifyId,
+                        @Nullable String spotifyDisplayName, long lastUpdate) {
         this.uuid = uuid;
         this.discordId = discordId;
         this.username = username;
