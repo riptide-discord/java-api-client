@@ -1,5 +1,6 @@
 package pink.zak.client.wavybot.models.impl;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import pink.zak.client.wavybot.models.SpotifyImage;
 
 public class SpotifyImageImpl implements SpotifyImage {
@@ -7,7 +8,9 @@ public class SpotifyImageImpl implements SpotifyImage {
     private final int width;
     private final String url;
 
-    public SpotifyImageImpl(int height, int width, String url) {
+    public SpotifyImageImpl(@JsonProperty("height") int height,
+                            @JsonProperty("width") int width,
+                            @JsonProperty("url") String url) {
         this.height = height;
         this.width = width;
         this.url = url;

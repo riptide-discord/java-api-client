@@ -1,5 +1,6 @@
 package pink.zak.client.wavybot.models.impl;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 import pink.zak.client.wavybot.RiptideImpl;
 import pink.zak.client.wavybot.models.Task;
@@ -15,11 +16,19 @@ public class TaskImpl implements Task {
 
     private RiptideImpl riptide;
 
-    public TaskImpl(@NotNull UUID taskId, long creationTime, int requiredProgress, int progress) {
+    public TaskImpl(@JsonProperty("taskId") @NotNull UUID taskId,
+                    @JsonProperty("creationTime") long creationTime,
+                    @JsonProperty("requiredProgress") int requiredProgress,
+                    @JsonProperty("progress") int progress) {
         this.taskId = taskId;
         this.creationTime = creationTime;
         this.requiredProgress = requiredProgress;
         this.progress = progress;
+    }
+
+    @Override
+    public RiptideImpl getRiptide() {
+        return this.riptide;
     }
 
     public void setRiptide(RiptideImpl riptide) {
@@ -28,7 +37,7 @@ public class TaskImpl implements Task {
 
     @Override
     @NotNull
-    public  UUID getTaskId() {
+    public UUID getTaskId() {
         return this.taskId;
     }
 

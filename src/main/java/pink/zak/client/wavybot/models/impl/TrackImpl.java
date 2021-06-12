@@ -1,5 +1,6 @@
 package pink.zak.client.wavybot.models.impl;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pink.zak.client.wavybot.RiptideImpl;
@@ -28,9 +29,15 @@ public class TrackImpl implements Track {
 
     private RiptideImpl riptide;
 
-    public TrackImpl(@NotNull String id, @NotNull String name, @NotNull String albumId, @NotNull Set<String> artistIds,
-                     long lastSpotifyUpdate, int discNumber, int durationMs, @Nullable String previewUrl,
-                     int trackNumber) {
+    public TrackImpl(@JsonProperty("id") @NotNull String id,
+                     @JsonProperty("name") @NotNull String name,
+                     @JsonProperty("albumId") @NotNull String albumId,
+                     @JsonProperty("artistIds") @NotNull Set<String> artistIds,
+                     @JsonProperty("lastSpotifyUpdate") long lastSpotifyUpdate,
+                     @JsonProperty("discNumber") int discNumber,
+                     @JsonProperty("durationMs") int durationMs,
+                     @JsonProperty("previewUrl") @Nullable String previewUrl,
+                     @JsonProperty("trackNumber") int trackNumber) {
         this.id = id;
         this.name = name;
         this.albumId = albumId;
@@ -40,6 +47,11 @@ public class TrackImpl implements Track {
         this.durationMs = durationMs;
         this.previewUrl = previewUrl;
         this.trackNumber = trackNumber;
+    }
+
+    @Override
+    public RiptideImpl getRiptide() {
+        return this.riptide;
     }
 
     public void setRiptide(RiptideImpl riptide) {
@@ -72,11 +84,6 @@ public class TrackImpl implements Track {
     @Override
     public @NotNull Set<String> getArtistIds() {
         return this.artistIds;
-    }
-
-    @Override
-    public @NotNull CompletableFuture<Set<String>> retrieveArtists() {
-        return null;
     }
 
     @Override

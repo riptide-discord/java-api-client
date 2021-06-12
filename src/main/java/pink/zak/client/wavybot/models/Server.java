@@ -1,17 +1,16 @@
 package pink.zak.client.wavybot.models;
 
 import org.jetbrains.annotations.NotNull;
+import pink.zak.client.wavybot.Riptide;
 
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 public interface Server {
+
+    Riptide getRiptide();
 
     long getServerId();
 
     @NotNull
     Set<Long> getLinkedUsers();
-
-    @NotNull
-    CompletableFuture<Set<User>> retrieveLinkedUsers();
 }

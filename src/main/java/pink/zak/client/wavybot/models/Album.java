@@ -4,13 +4,18 @@ import com.wrapper.spotify.enums.AlbumType;
 import com.wrapper.spotify.enums.ReleaseDatePrecision;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pink.zak.client.wavybot.Riptide;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public interface Album {
+
+    Riptide getRiptide();
 
     @NotNull
     String getId();
@@ -21,10 +26,13 @@ public interface Album {
     @NotNull
     Set<String> getArtistIds();
 
-    CompletableFuture<Set<Artist>> retrieveArtists();
+    @NotNull
+    default CompletableFuture<Collection<? extends Artist>> retrieveArtists() {
+        return this.getRiptide().retrieveBulkArtists(this.getArtistIds()).thenApply(Map::values);
+    }
 
     @NotNull
-    Set<SpotifyImage> getAlbumImages();
+    Set<? extends SpotifyImage> getAlbumImages();
 
     // below this are only present if the model is enriched from spotify
 
@@ -53,5 +61,10 @@ public interface Album {
      * @throws IllegalStateException if trackIds is null
      */
     @NotNull
-    CompletableFuture<List<Track>> retrieveTracks() throws IllegalStateException;
+    default CompletableFuture<Collection<? extends Track>> retrieveTracks() throws IllegalStateException {
+        if (this.getTrackIds() == null)
+            throw new IllegalStateException("retrieveTracks cannot be called if trackIds is null");
+
+        return this.getRiptide().retrieveBulkTracks(this.getTrackIds()).thenApply(Map::values);
+    }
 }

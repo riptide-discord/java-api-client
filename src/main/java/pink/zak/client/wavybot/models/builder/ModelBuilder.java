@@ -6,10 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.NotNull;
 import pink.zak.client.wavybot.Riptide;
 import pink.zak.client.wavybot.RiptideImpl;
+import pink.zak.client.wavybot.models.Album;
 import pink.zak.client.wavybot.models.Artist;
 import pink.zak.client.wavybot.models.Track;
 import pink.zak.client.wavybot.models.User;
 import pink.zak.client.wavybot.models.WavyUser;
+import pink.zak.client.wavybot.models.impl.AlbumImpl;
 import pink.zak.client.wavybot.models.impl.ArtistImpl;
 import pink.zak.client.wavybot.models.impl.TrackImpl;
 import pink.zak.client.wavybot.models.impl.UserImpl;
@@ -30,6 +32,12 @@ public class ModelBuilder {
 
     private static final TypeReference<UserImpl> USER_REFERENCE = new TypeReference<>(){};
     private static final TypeReference<WavyUserImpl> WAVY_USER_REFERENCE = new TypeReference<>(){};
+
+    private static final TypeReference<AlbumImpl> ALBUM_REFERENCE = new TypeReference<>(){};
+    private static final TypeReference<ArtistImpl> ARTIST_REFERENCE = new TypeReference<>(){};
+    private static final TypeReference<TrackImpl> TRACK_REFERENCE = new TypeReference<>(){};
+
+    private static final TypeReference<HashMap<String, AlbumImpl>> BULK_REQUEST_ALBUM_REFERENCE = new TypeReference<>(){};
     private static final TypeReference<HashMap<String, ArtistImpl>> BULK_REQUEST_ARTIST_REFERENCE = new TypeReference<>(){};
     private static final TypeReference<HashMap<String, TrackImpl>> BULK_REQUEST_TRACK_REFERENCE = new TypeReference<>(){};
 
@@ -59,22 +67,67 @@ public class ModelBuilder {
         return null;
     }
 
-    public Set<Artist> createArtists(String body) {
+    public Album createAlbum(String body) {
         try {
-            Map<String, ArtistImpl> artistMap = this.objectMapper.readValue(body, BULK_REQUEST_ARTIST_REFERENCE);
-            artistMap.values().forEach(artist -> artist.setRiptide(this.riptide));
-            return new HashSet<>(artistMap.values());
+            AlbumImpl album = this.objectMapper.readValue(body, ALBUM_REFERENCE);
+            album.setRiptide(this.riptide);
+            return album;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public List<Track> createTracks(String body) {
+    public Artist createArtist(String body) {
+        try {
+            ArtistImpl artist = this.objectMapper.readValue(body, ARTIST_REFERENCE);
+            artist.setRiptide(this.riptide);
+            return artist;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Track createTrack(String body) {
+        try {
+            TrackImpl track = this.objectMapper.readValue(body, TRACK_REFERENCE);
+            track.setRiptide(this.riptide);
+            return track;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Map<String, ? extends Album> createAlbums(String body) {
+        try {
+            Map<String, AlbumImpl> albumMap = this.objectMapper.readValue(body, BULK_REQUEST_ALBUM_REFERENCE);
+            albumMap.values().forEach(album -> album.setRiptide(this.riptide));
+            return albumMap;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    public Map<String, ? extends Artist> createArtists(String body) {
+        try {
+            Map<String, ArtistImpl> artistMap = this.objectMapper.readValue(body, BULK_REQUEST_ARTIST_REFERENCE);
+            artistMap.values().forEach(artist -> artist.setRiptide(this.riptide));
+            return artistMap;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Map<String, ? extends Track> createTracks(String body) {
         try {
             Map<String, TrackImpl> trackMap = this.objectMapper.readValue(body, BULK_REQUEST_TRACK_REFERENCE);
             trackMap.values().forEach(track -> track.setRiptide(this.riptide));
-            return new ArrayList<>(trackMap.values());
+            return trackMap;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

@@ -22,6 +22,11 @@ public class UserImpl implements User {
         this.wavyUuid = wavyUuid;
     }
 
+    @Override
+    public RiptideImpl getRiptide() {
+        return this.riptide;
+    }
+
     public void setRiptide(RiptideImpl riptide) {
         this.riptide = riptide;
     }

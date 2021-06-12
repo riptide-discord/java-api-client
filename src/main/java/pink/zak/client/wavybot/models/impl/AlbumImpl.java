@@ -1,5 +1,6 @@
 package pink.zak.client.wavybot.models.impl;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wrapper.spotify.enums.AlbumType;
 import com.wrapper.spotify.enums.ReleaseDatePrecision;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +26,7 @@ public class AlbumImpl implements Album {
     private final String id;
     private final String name;
     private final Set<String> artistIds;
-    private final Set<SpotifyImage> albumImages;
+    private final Set<SpotifyImageImpl> albumImages;
     private final long lastSpotifyUpdate;
 
     @Nullable
@@ -43,9 +44,17 @@ public class AlbumImpl implements Album {
 
     private RiptideImpl riptide;
 
-    public AlbumImpl(String id, String name, Set<String> artistIds, Set<SpotifyImage> albumImages,
-                     long lastSpotifyUpdate, @Nullable AlbumType albumType, @Nullable String label, @Nullable Date releaseDate,
-                     @Nullable ReleaseDatePrecision releaseDatePrecision, @Nullable String[] genres, @Nullable List<String> trackIds) {
+    public AlbumImpl(@JsonProperty("id") String id,
+                     @JsonProperty("name") String name,
+                     @JsonProperty("artistIds") Set<String> artistIds,
+                     @JsonProperty("albumImages") Set<SpotifyImageImpl> albumImages,
+                     @JsonProperty("lastSpotifyUpdate") long lastSpotifyUpdate,
+                     @JsonProperty("albumType") @Nullable AlbumType albumType,
+                     @JsonProperty("label") @Nullable String label,
+                     @JsonProperty("releaseDate") @Nullable Date releaseDate,
+                     @JsonProperty("releaseDatePrecision") @Nullable ReleaseDatePrecision releaseDatePrecision,
+                     @JsonProperty("genres") @Nullable String[] genres,
+                     @JsonProperty("trackIds") @Nullable List<String> trackIds) {
         this.id = id;
         this.name = name;
         this.artistIds = artistIds;
@@ -57,6 +66,11 @@ public class AlbumImpl implements Album {
         this.releaseDatePrecision = releaseDatePrecision;
         this.genres = genres;
         this.trackIds = trackIds;
+    }
+
+    @Override
+    public RiptideImpl getRiptide() {
+        return this.riptide;
     }
 
     public void setRiptide(RiptideImpl riptide) {
@@ -82,17 +96,8 @@ public class AlbumImpl implements Album {
     }
 
     @Override
-    public CompletableFuture<Set<Artist>> retrieveArtists() {
-        String joinedIds = Joiner.join(this.artistIds, ",");
-        HttpRequest request = RequestUtils.createRequest(this.riptide, Route.Spotify.GET_BULK_SPOTIFY_ARTIST, parameters -> parameters.addParameter("ids", joinedIds));
-        return this.riptide.getHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
-            return this.riptide.getModelBuilder().createArtists(response.body());
-        });
-    }
-
-    @Override
     @NotNull
-    public Set<SpotifyImage> getAlbumImages() {
+    public Set<? extends SpotifyImage> getAlbumImages() {
         return this.albumImages;
     }
 
@@ -135,18 +140,6 @@ public class AlbumImpl implements Album {
     @Nullable
     public List<String> getTrackIds() {
         return this.trackIds;
-    }
-
-    @Override
-    public @NotNull CompletableFuture<List<Track>> retrieveTracks() throws IllegalStateException {
-        if (this.trackIds == null)
-            throw new IllegalStateException("retrieveTracks cannot be called if trackIds is null");
-
-        String joinedIds = Joiner.join(this.trackIds, ",");
-        HttpRequest request = RequestUtils.createRequest(this.riptide, Route.Spotify.GET_BULK_SPOTIFY_TRACK, parameters -> parameters.addParameter("ids", joinedIds));
-        return this.riptide.getHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
-            return this.riptide.getModelBuilder().createTracks(response.body());
-        });
     }
 
     @Override

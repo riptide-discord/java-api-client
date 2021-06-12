@@ -2,10 +2,14 @@ package pink.zak.client.wavybot.models;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pink.zak.client.wavybot.Riptide;
 
 import java.util.Set;
 
 public interface Artist {
+
+    Riptide getRiptide();
+
     @NotNull
     String getId();
 
@@ -17,7 +21,7 @@ public interface Artist {
     long getLastSpotifyUpdate();
 
     @Nullable
-    Set<SpotifyImage> getArtistImages();
+    Set<? extends SpotifyImage> getArtistImages();
 
     @Nullable
     String[] getGenre();

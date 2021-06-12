@@ -1,5 +1,6 @@
 package pink.zak.client.wavybot.models.impl;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pink.zak.client.wavybot.RiptideImpl;
@@ -23,14 +24,23 @@ public class WavyUserImpl implements WavyUser {
 
     private RiptideImpl riptide;
 
-    public WavyUserImpl(@NotNull UUID uuid, long discordId, @NotNull String username, @Nullable String spotifyId,
-                        @Nullable String spotifyDisplayName, long lastUpdate) {
+    public WavyUserImpl(@JsonProperty("uuid") @NotNull UUID uuid,
+                        @JsonProperty("discordId") long discordId,
+                        @JsonProperty("username") @NotNull String username,
+                        @JsonProperty("spotifyId") @Nullable String spotifyId,
+                        @JsonProperty("spotifyDisplayName") @Nullable String spotifyDisplayName,
+                        @JsonProperty("lastUpdate") long lastUpdate) {
         this.uuid = uuid;
         this.discordId = discordId;
         this.username = username;
         this.spotifyId = spotifyId;
         this.spotifyDisplayName = spotifyDisplayName;
         this.lastUpdate = lastUpdate;
+    }
+
+    @Override
+    public RiptideImpl getRiptide() {
+        return this.riptide;
     }
 
     public void setRiptide(RiptideImpl riptide) {
