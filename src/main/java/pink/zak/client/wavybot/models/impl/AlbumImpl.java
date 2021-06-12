@@ -4,12 +4,22 @@ import com.wrapper.spotify.enums.AlbumType;
 import com.wrapper.spotify.enums.ReleaseDatePrecision;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pink.zak.client.wavybot.RiptideImpl;
 import pink.zak.client.wavybot.models.Album;
+import pink.zak.client.wavybot.models.Artist;
 import pink.zak.client.wavybot.models.SpotifyImage;
+import pink.zak.client.wavybot.models.Track;
+import pink.zak.client.wavybot.requests.Route;
+import pink.zak.client.wavybot.utils.Joiner;
+import pink.zak.client.wavybot.utils.RequestUtils;
 
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public class AlbumImpl implements Album {
     private final String id;
@@ -31,6 +41,8 @@ public class AlbumImpl implements Album {
     @Nullable
     private final List<String> trackIds;
 
+    private RiptideImpl riptide;
+
     public AlbumImpl(String id, String name, Set<String> artistIds, Set<SpotifyImage> albumImages,
                      long lastSpotifyUpdate, @Nullable AlbumType albumType, @Nullable String label, @Nullable Date releaseDate,
                      @Nullable ReleaseDatePrecision releaseDatePrecision, @Nullable String[] genres, @Nullable List<String> trackIds) {
@@ -45,6 +57,10 @@ public class AlbumImpl implements Album {
         this.releaseDatePrecision = releaseDatePrecision;
         this.genres = genres;
         this.trackIds = trackIds;
+    }
+
+    public void setRiptide(RiptideImpl riptide) {
+        this.riptide = riptide;
     }
 
     @Override
@@ -63,6 +79,15 @@ public class AlbumImpl implements Album {
     @NotNull
     public Set<String> getArtistIds() {
         return this.artistIds;
+    }
+
+    @Override
+    public CompletableFuture<Set<Artist>> retrieveArtists() {
+        String joinedIds = Joiner.join(this.artistIds, ",");
+        HttpRequest request = RequestUtils.createRequest(this.riptide, Route.Spotify.GET_BULK_SPOTIFY_ARTIST, parameters -> parameters.addParameter("ids", joinedIds));
+        return this.riptide.getHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
+            return this.riptide.getModelBuilder().createArtists(response.body());
+        });
     }
 
     @Override
@@ -110,5 +135,35 @@ public class AlbumImpl implements Album {
     @Nullable
     public List<String> getTrackIds() {
         return this.trackIds;
+    }
+
+    @Override
+    public @NotNull CompletableFuture<List<Track>> retrieveTracks() throws IllegalStateException {
+        if (this.trackIds == null)
+            throw new IllegalStateException("retrieveTracks cannot be called if trackIds is null");
+
+        String joinedIds = Joiner.join(this.trackIds, ",");
+        HttpRequest request = RequestUtils.createRequest(this.riptide, Route.Spotify.GET_BULK_SPOTIFY_TRACK, parameters -> parameters.addParameter("ids", joinedIds));
+        return this.riptide.getHttpClient().sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
+            return this.riptide.getModelBuilder().createTracks(response.body());
+        });
+    }
+
+    @Override
+    public String toString() {
+        return "AlbumImpl{" +
+                "id='" + this.id + '\'' +
+                ", name='" + this.name + '\'' +
+                ", artistIds=" + this.artistIds +
+                ", albumImages=" + this.albumImages +
+                ", lastSpotifyUpdate=" + this.lastSpotifyUpdate +
+                ", albumType=" + this.albumType +
+                ", label='" + this.label + '\'' +
+                ", releaseDate=" + this.releaseDate +
+                ", releaseDatePrecision=" + this.releaseDatePrecision +
+                ", genres=" + Arrays.toString(this.genres) +
+                ", trackIds=" + this.trackIds +
+                ", riptide=" + this.riptide +
+                '}';
     }
 }

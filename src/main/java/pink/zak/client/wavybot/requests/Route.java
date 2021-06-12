@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
+import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -17,6 +18,9 @@ public class Route {
         public static final Route GET_SPOTIFY_ALBUM = new Route(Method.GET, "/spotify/album/get");
         public static final Route GET_SPOTIFY_ARTIST = new Route(Method.GET, "/spotify/artist/get");
         public static final Route GET_SPOTIFY_TRACK = new Route(Method.GET, "/spotify/track/get");
+        public static final Route GET_BULK_SPOTIFY_ALBUM = new Route(Method.GET, "/spotify/album/getBulk");
+        public static final Route GET_BULK_SPOTIFY_ARTIST = new Route(Method.GET, "/spotify/artist/getBulk");
+        public static final Route GET_BULK_SPOTIFY_TRACK = new Route(Method.GET, "/spotify/track/getBulk");
     }
 
     public static class Tasks {

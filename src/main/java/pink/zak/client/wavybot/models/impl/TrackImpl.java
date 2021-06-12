@@ -2,9 +2,12 @@ package pink.zak.client.wavybot.models.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pink.zak.client.wavybot.RiptideImpl;
+import pink.zak.client.wavybot.models.Album;
 import pink.zak.client.wavybot.models.Track;
 
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public class TrackImpl implements Track {
     @NotNull
@@ -23,6 +26,8 @@ public class TrackImpl implements Track {
     private final String previewUrl;
     private final int trackNumber;
 
+    private RiptideImpl riptide;
+
     public TrackImpl(@NotNull String id, @NotNull String name, @NotNull String albumId, @NotNull Set<String> artistIds,
                      long lastSpotifyUpdate, int discNumber, int durationMs, @Nullable String previewUrl,
                      int trackNumber) {
@@ -35,6 +40,10 @@ public class TrackImpl implements Track {
         this.durationMs = durationMs;
         this.previewUrl = previewUrl;
         this.trackNumber = trackNumber;
+    }
+
+    public void setRiptide(RiptideImpl riptide) {
+        this.riptide = riptide;
     }
 
     @Override
@@ -56,8 +65,18 @@ public class TrackImpl implements Track {
     }
 
     @Override
+    public @NotNull CompletableFuture<Album> retrieveAlbum() {
+        return null;
+    }
+
+    @Override
     public @NotNull Set<String> getArtistIds() {
         return this.artistIds;
+    }
+
+    @Override
+    public @NotNull CompletableFuture<Set<String>> retrieveArtists() {
+        return null;
     }
 
     @Override
@@ -83,5 +102,21 @@ public class TrackImpl implements Track {
     @Override
     public int getTrackNumber() {
         return this.trackNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "TrackImpl{" +
+                "id='" + this.id + '\'' +
+                ", name='" + this.name + '\'' +
+                ", albumId='" + this.albumId + '\'' +
+                ", artistIds=" + this.artistIds +
+                ", lastSpotifyUpdate=" + this.lastSpotifyUpdate +
+                ", discNumber=" + this.discNumber +
+                ", durationMs=" + this.durationMs +
+                ", previewUrl='" + this.previewUrl + '\'' +
+                ", trackNumber=" + this.trackNumber +
+                ", riptide=" + this.riptide +
+                '}';
     }
 }

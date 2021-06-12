@@ -2,9 +2,11 @@ package pink.zak.client.wavybot.models.impl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pink.zak.client.wavybot.RiptideImpl;
 import pink.zak.client.wavybot.models.Artist;
 import pink.zak.client.wavybot.models.SpotifyImage;
 
+import java.util.Arrays;
 import java.util.Set;
 
 public class ArtistImpl implements Artist {
@@ -19,6 +21,8 @@ public class ArtistImpl implements Artist {
     @Nullable
     private final String[] genres;
 
+    private RiptideImpl riptide;
+
     public ArtistImpl(@NotNull String id, @NotNull String name, long lastSpotifyUpdate, @Nullable Set<SpotifyImage> artistImages,
                       @Nullable String[] genres) {
         this.id = id;
@@ -26,6 +30,10 @@ public class ArtistImpl implements Artist {
         this.lastSpotifyUpdate = lastSpotifyUpdate;
         this.artistImages = artistImages;
         this.genres = genres;
+    }
+
+    public void setRiptide(RiptideImpl riptide) {
+        this.riptide = riptide;
     }
 
     @Override
@@ -55,5 +63,17 @@ public class ArtistImpl implements Artist {
     @Nullable
     public String[] getGenre() {
         return this.genres;
+    }
+
+    @Override
+    public String toString() {
+        return "ArtistImpl{" +
+                "id='" + this.id + '\'' +
+                ", name='" + this.name + '\'' +
+                ", lastSpotifyUpdate=" + this.lastSpotifyUpdate +
+                ", artistImages=" + this.artistImages +
+                ", genres=" + Arrays.toString(this.genres) +
+                ", riptide=" + this.riptide +
+                '}';
     }
 }

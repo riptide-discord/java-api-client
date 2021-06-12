@@ -27,4 +27,13 @@ public class SpotifyImageImpl implements SpotifyImage {
     public String getUrl() {
         return this.url;
     }
+
+    @Override
+    public String toString() {
+        return "SpotifyImageImpl{" +
+                "height=" + this.height +
+                ", width=" + this.width +
+                ", url='" + this.url + '\'' +
+                '}';
+    }
 }
