@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 public interface Album {
 
@@ -19,6 +20,8 @@ public interface Album {
 
     @NotNull
     Set<String> getArtistIds();
+
+    CompletableFuture<Set<Artist>> retrieveArtists();
 
     @NotNull
     Set<SpotifyImage> getAlbumImages();
@@ -44,4 +47,11 @@ public interface Album {
 
     @Nullable
     List<String> getTrackIds();
+
+    /**
+     * @return Future of the fetched {@link Track} models from the API
+     * @throws IllegalStateException if trackIds is null
+     */
+    @NotNull
+    CompletableFuture<List<Track>> retrieveTracks() throws IllegalStateException;
 }

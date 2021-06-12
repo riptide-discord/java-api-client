@@ -21,7 +21,8 @@ public class ServerImpl implements Server {
     }
 
     @Override
-    public @NotNull Set<Long> getLinkedUsers() {
+    @NotNull
+    public Set<Long> getLinkedUsers() {
         return this.linkedUsers;
     }
 }

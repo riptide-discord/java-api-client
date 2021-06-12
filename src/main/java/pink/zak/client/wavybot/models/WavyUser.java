@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public interface WavyUser {
 
@@ -11,6 +12,9 @@ public interface WavyUser {
     UUID getUuid();
 
     long getDiscordId();
+
+    @NotNull
+    CompletableFuture<User> retrieveUser();
 
     @NotNull
     String getUsername();
