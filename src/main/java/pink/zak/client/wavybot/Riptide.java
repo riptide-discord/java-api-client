@@ -3,6 +3,7 @@ package pink.zak.client.wavybot;
 import org.jetbrains.annotations.NotNull;
 import pink.zak.client.wavybot.models.Album;
 import pink.zak.client.wavybot.models.Artist;
+import pink.zak.client.wavybot.models.Task;
 import pink.zak.client.wavybot.models.Track;
 import pink.zak.client.wavybot.models.User;
 import pink.zak.client.wavybot.models.WavyUser;
@@ -25,6 +26,12 @@ public interface Riptide {
 
     @NotNull
     CompletableFuture<WavyUser> retrieveWavyUser(long discordId);
+
+    @NotNull
+    CompletableFuture<Task> linkWavy(long discordId, @NotNull String wavyUsername);
+
+    @NotNull
+    CompletableFuture<Task> updateListens(long discordId);
 
     @NotNull
     CompletableFuture<Album> retrieveAlbum(String spotifyId);

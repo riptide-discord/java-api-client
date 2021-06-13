@@ -19,4 +19,9 @@ public interface User {
     default CompletableFuture<WavyUser> retrieveWavyUser() {
         return this.getRiptide().retrieveWavyUser(this.getDiscordId());
     }
+
+    @NotNull
+    default CompletableFuture<Task> updateListens() {
+        return this.getRiptide().updateListens(this.getDiscordId());
+    }
 }

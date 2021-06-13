@@ -3,6 +3,7 @@ package pink.zak.client.wavybot;
 import org.jetbrains.annotations.NotNull;
 import pink.zak.client.wavybot.models.Album;
 import pink.zak.client.wavybot.models.Artist;
+import pink.zak.client.wavybot.models.Task;
 import pink.zak.client.wavybot.models.Track;
 import pink.zak.client.wavybot.models.User;
 import pink.zak.client.wavybot.models.WavyUser;
@@ -16,6 +17,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class RiptideImpl implements Riptide {
@@ -35,23 +37,7 @@ public class RiptideImpl implements Riptide {
         Riptide riptide = RiptideBuilder.create("http://localhost:8080", "admin", "admin")
                 .build();
 
-        long time = System.currentTimeMillis();
-        riptide.retrieveUser(240721111174610945L)
-                .thenAccept(System.out::println).join();
-
-        riptide.retrieveAlbum("0kNUDDHwjpemplDqSZ72Ct")
-                .thenApply(album -> {
-                    System.out.println(album);
-                    return album;
-                })
-                .thenAccept(album -> {
-                    album.retrieveArtists()
-                            .thenAccept(System.out::println)
-                            .join();
-                }).join();
-
-        riptide.retrieveTrack("2kONpeXXK70YEs7c0UQbmq")
-                .thenAccept(System.out::println).join();
+        riptide.updateListens(240721111174610945L).thenAccept(System.out::println).join();
 
     }
 
@@ -84,6 +70,20 @@ public class RiptideImpl implements Riptide {
     public CompletableFuture<WavyUser> retrieveWavyUser(long discordId) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Users.GET_WAVY, String.valueOf(discordId));
         return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createWavyUser(response.body()));
+    }
+
+    @Override
+    @NotNull
+    public CompletableFuture<Task> linkWavy(long discordId, @NotNull String wavyUsername) {
+        HttpRequest request = RequestUtils.createRequest(this, Route.Users.LINK_WAVY, query -> query.addParameter("wavyUsername", wavyUsername), String.valueOf(discordId));
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTask(response.body()));
+    }
+
+    @Override
+    @NotNull
+    public CompletableFuture<Task> updateListens(long discordId) {
+        HttpRequest request = RequestUtils.createRequest(this, Route.Users.UPDATE_LISTENS, String.valueOf(discordId));
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTask(response.body()));
     }
 
     @Override

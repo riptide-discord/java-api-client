@@ -35,4 +35,20 @@ public class RiptideBuilder {
 
         return new RiptideImpl(this.httpClientBuilder.build(), this.url);
     }
+
+    public void setUrl(@NotNull String url) {
+        this.url = url;
+    }
+
+    public void setUsername(@NotNull String username) {
+        this.username = username;
+    }
+
+    public void setPassword(@NotNull String password) {
+        this.password = password;
+    }
+
+    public void setHttpClientBuilder(@Nullable HttpClient.Builder httpClientBuilder) {
+        this.httpClientBuilder = httpClientBuilder;
+    }
 }

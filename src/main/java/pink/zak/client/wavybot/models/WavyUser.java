@@ -22,6 +22,11 @@ public interface WavyUser {
     }
 
     @NotNull
+    default CompletableFuture<Task> updateListens() {
+        return this.getRiptide().updateListens(this.getDiscordId());
+    }
+
+    @NotNull
     String getUsername();
 
     @Nullable

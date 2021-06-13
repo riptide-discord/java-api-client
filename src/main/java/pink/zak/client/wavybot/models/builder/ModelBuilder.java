@@ -8,11 +8,13 @@ import pink.zak.client.wavybot.Riptide;
 import pink.zak.client.wavybot.RiptideImpl;
 import pink.zak.client.wavybot.models.Album;
 import pink.zak.client.wavybot.models.Artist;
+import pink.zak.client.wavybot.models.Task;
 import pink.zak.client.wavybot.models.Track;
 import pink.zak.client.wavybot.models.User;
 import pink.zak.client.wavybot.models.WavyUser;
 import pink.zak.client.wavybot.models.impl.AlbumImpl;
 import pink.zak.client.wavybot.models.impl.ArtistImpl;
+import pink.zak.client.wavybot.models.impl.TaskImpl;
 import pink.zak.client.wavybot.models.impl.TrackImpl;
 import pink.zak.client.wavybot.models.impl.UserImpl;
 import pink.zak.client.wavybot.models.impl.WavyUserImpl;
@@ -32,6 +34,7 @@ public class ModelBuilder {
 
     private static final TypeReference<UserImpl> USER_REFERENCE = new TypeReference<>(){};
     private static final TypeReference<WavyUserImpl> WAVY_USER_REFERENCE = new TypeReference<>(){};
+    private static final TypeReference<TaskImpl> TASK_REFERENCE = new TypeReference<>(){};
 
     private static final TypeReference<AlbumImpl> ALBUM_REFERENCE = new TypeReference<>(){};
     private static final TypeReference<ArtistImpl> ARTIST_REFERENCE = new TypeReference<>(){};
@@ -61,6 +64,17 @@ public class ModelBuilder {
             WavyUserImpl wavyUser = this.objectMapper.readValue(body, WAVY_USER_REFERENCE);
             wavyUser.setRiptide(this.riptide);
             return wavyUser;
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Task createTask(String body) {
+        try {
+            TaskImpl task = this.objectMapper.readValue(body, TASK_REFERENCE);
+            task.setRiptide(this.riptide);
+            return task;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
