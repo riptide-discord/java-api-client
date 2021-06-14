@@ -22,18 +22,6 @@ public interface Riptide {
     String getUrl();
 
     @NotNull
-    CompletableFuture<User> retrieveUser(long discordId);
-
-    @NotNull
-    CompletableFuture<WavyUser> retrieveWavyUser(long discordId);
-
-    @NotNull
-    CompletableFuture<Task> linkWavy(long discordId, @NotNull String wavyUsername);
-
-    @NotNull
-    CompletableFuture<Task> updateListens(long discordId);
-
-    @NotNull
     CompletableFuture<Album> retrieveAlbum(String spotifyId);
 
     @NotNull
@@ -50,4 +38,16 @@ public interface Riptide {
 
     @NotNull
     CompletableFuture<Map<String, ? extends Track>> retrieveBulkTracks(Collection<String> SpotifyIds);
+
+    @NotNull
+    CompletableFuture<User> retrieveUser(long discordId);
+
+    @NotNull
+    CompletableFuture<WavyUser> retrieveWavyUser(long discordId);
+
+    @NotNull
+    CompletableFuture<Task> linkWavy(long discordId, @NotNull String wavyUsername);
+
+    @NotNull
+    CompletableFuture<Task> updateListens(long discordId);
 }

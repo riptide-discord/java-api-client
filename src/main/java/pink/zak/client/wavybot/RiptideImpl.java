@@ -60,34 +60,6 @@ public class RiptideImpl implements Riptide {
 
     @Override
     @NotNull
-    public CompletableFuture<User> retrieveUser(long discordId) {
-        HttpRequest request = RequestUtils.createRequest(this, Route.Users.GET_USER, String.valueOf(discordId));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createUser(response.body()));
-    }
-
-    @Override
-    @NotNull
-    public CompletableFuture<WavyUser> retrieveWavyUser(long discordId) {
-        HttpRequest request = RequestUtils.createRequest(this, Route.Users.GET_WAVY, String.valueOf(discordId));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createWavyUser(response.body()));
-    }
-
-    @Override
-    @NotNull
-    public CompletableFuture<Task> linkWavy(long discordId, @NotNull String wavyUsername) {
-        HttpRequest request = RequestUtils.createRequest(this, Route.Users.LINK_WAVY, query -> query.addParameter("wavyUsername", wavyUsername), String.valueOf(discordId));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTask(response.body()));
-    }
-
-    @Override
-    @NotNull
-    public CompletableFuture<Task> updateListens(long discordId) {
-        HttpRequest request = RequestUtils.createRequest(this, Route.Users.UPDATE_LISTENS, String.valueOf(discordId));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTask(response.body()));
-    }
-
-    @Override
-    @NotNull
     public CompletableFuture<Album> retrieveAlbum(String spotifyId) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Spotify.GET_SPOTIFY_ALBUM, query -> query.addParameter("id", spotifyId));
         return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createAlbum(response.body()));
@@ -135,5 +107,33 @@ public class RiptideImpl implements Riptide {
         return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
             return this.modelBuilder.createTracks(response.body());
         });
+    }
+
+    @Override
+    @NotNull
+    public CompletableFuture<User> retrieveUser(long discordId) {
+        HttpRequest request = RequestUtils.createRequest(this, Route.Users.GET_USER, String.valueOf(discordId));
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createUser(response.body()));
+    }
+
+    @Override
+    @NotNull
+    public CompletableFuture<WavyUser> retrieveWavyUser(long discordId) {
+        HttpRequest request = RequestUtils.createRequest(this, Route.Users.GET_WAVY, String.valueOf(discordId));
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createWavyUser(response.body()));
+    }
+
+    @Override
+    @NotNull
+    public CompletableFuture<Task> linkWavy(long discordId, @NotNull String wavyUsername) {
+        HttpRequest request = RequestUtils.createRequest(this, Route.Users.LINK_WAVY, query -> query.addParameter("wavyUsername", wavyUsername), String.valueOf(discordId));
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTask(response.body()));
+    }
+
+    @Override
+    @NotNull
+    public CompletableFuture<Task> updateListens(long discordId) {
+        HttpRequest request = RequestUtils.createRequest(this, Route.Users.UPDATE_LISTENS, String.valueOf(discordId));
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTask(response.body()));
     }
 }
