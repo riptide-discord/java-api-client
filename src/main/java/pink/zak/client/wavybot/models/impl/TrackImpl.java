@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pink.zak.client.wavybot.RiptideImpl;
-import pink.zak.client.wavybot.models.Album;
-import pink.zak.client.wavybot.models.Track;
+import pink.zak.client.wavybot.models.spotify.Album;
+import pink.zak.client.wavybot.models.spotify.Track;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;

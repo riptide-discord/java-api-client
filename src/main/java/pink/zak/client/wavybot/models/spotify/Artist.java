@@ -1,4 +1,4 @@
-package pink.zak.client.wavybot.models;
+package pink.zak.client.wavybot.models.spotify;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

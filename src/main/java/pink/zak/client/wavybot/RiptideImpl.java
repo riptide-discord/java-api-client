@@ -1,13 +1,15 @@
 package pink.zak.client.wavybot;
 
 import org.jetbrains.annotations.NotNull;
-import pink.zak.client.wavybot.models.Album;
-import pink.zak.client.wavybot.models.Artist;
+import pink.zak.client.wavybot.enums.Leaderboard;
 import pink.zak.client.wavybot.models.Task;
-import pink.zak.client.wavybot.models.Track;
+import pink.zak.client.wavybot.models.Tuple;
 import pink.zak.client.wavybot.models.User;
 import pink.zak.client.wavybot.models.WavyUser;
 import pink.zak.client.wavybot.models.builder.ModelBuilder;
+import pink.zak.client.wavybot.models.spotify.Album;
+import pink.zak.client.wavybot.models.spotify.Artist;
+import pink.zak.client.wavybot.models.spotify.Track;
 import pink.zak.client.wavybot.requests.Route;
 import pink.zak.client.wavybot.utils.Joiner;
 import pink.zak.client.wavybot.utils.RequestUtils;
@@ -17,7 +19,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Collection;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class RiptideImpl implements Riptide {
@@ -38,7 +39,6 @@ public class RiptideImpl implements Riptide {
                 .build();
 
         riptide.updateListens(240721111174610945L).thenAccept(System.out::println).join();
-
     }
 
     @NotNull
@@ -59,6 +59,22 @@ public class RiptideImpl implements Riptide {
     }
 
     @Override
+    public CompletableFuture<Map<Long, Tuple<String, Integer>>> retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard, long start, long end) {
+        HttpRequest request = RequestUtils.createRequest(this, Route.Leaderboards.GET_PARTIAL_LEADERBOARD, query -> query
+                        .addParameter("leaderboard", leaderboard)
+                        .addParameter("start", start)
+                        .addParameter("end", end), String.valueOf(discordId));
+
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createLeaderboard(response.body()));
+    }
+
+    @Override
+    public CompletableFuture<Map<Long, Tuple<String, Integer>>> retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard) {
+        HttpRequest request = RequestUtils.createRequest(this, Route.Leaderboards.GET_PARTIAL_LEADERBOARD, query -> query.addParameter("leaderboard", leaderboard), String.valueOf(discordId));
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createLeaderboard(response.body()));
+    }
+
+    @Override
     @NotNull
     public CompletableFuture<Album> retrieveAlbum(String spotifyId) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Spotify.GET_SPOTIFY_ALBUM, query -> query.addParameter("id", spotifyId));
@@ -70,9 +86,7 @@ public class RiptideImpl implements Riptide {
     public CompletableFuture<Map<String, ? extends Album>> retrieveBulkAlbums(Collection<String> spotifyIds) {
         String joinedIds = Joiner.join(spotifyIds, ",");
         HttpRequest request = RequestUtils.createRequest(this, Route.Spotify.GET_BULK_SPOTIFY_ALBUM, parameters -> parameters.addParameter("ids", joinedIds));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
-            return this.modelBuilder.createAlbums(response.body());
-        });
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createAlbums(response.body()));
     }
 
     @Override
@@ -87,9 +101,7 @@ public class RiptideImpl implements Riptide {
     public CompletableFuture<Map<String, ? extends Artist>> retrieveBulkArtists(Collection<String> spotifyIds) {
         String joinedIds = Joiner.join(spotifyIds, ",");
         HttpRequest request = RequestUtils.createRequest(this, Route.Spotify.GET_BULK_SPOTIFY_ARTIST, parameters -> parameters.addParameter("ids", joinedIds));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
-            return this.modelBuilder.createArtists(response.body());
-        });
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createArtists(response.body()));
     }
 
     @Override
@@ -104,9 +116,7 @@ public class RiptideImpl implements Riptide {
     public CompletableFuture<Map<String, ? extends Track>> retrieveBulkTracks(Collection<String> spotifyIds) {
         String joinedIds = Joiner.join(spotifyIds, ",");
         HttpRequest request = RequestUtils.createRequest(this, Route.Spotify.GET_BULK_SPOTIFY_TRACK, parameters -> parameters.addParameter("ids", joinedIds));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> {
-            return this.modelBuilder.createTracks(response.body());
-        });
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTracks(response.body()));
     }
 
     @Override

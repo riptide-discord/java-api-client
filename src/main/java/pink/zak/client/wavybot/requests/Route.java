@@ -2,10 +2,9 @@ package pink.zak.client.wavybot.requests;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pink.zak.client.wavybot.requests.config.QueryParameters;
 
 import java.net.URI;
-import java.net.http.HttpResponse;
-import java.util.Map;
 import java.util.function.Consumer;
 
 public class Route {

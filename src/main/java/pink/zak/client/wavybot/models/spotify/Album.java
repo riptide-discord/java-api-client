@@ -1,4 +1,4 @@
-package pink.zak.client.wavybot.models;
+package pink.zak.client.wavybot.models.spotify;
 
 import com.wrapper.spotify.enums.AlbumType;
 import com.wrapper.spotify.enums.ReleaseDatePrecision;

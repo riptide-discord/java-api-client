@@ -1,4 +1,4 @@
-package pink.zak.client.wavybot.requests;
+package pink.zak.client.wavybot.requests.config;
 
 import org.jetbrains.annotations.NotNull;
 

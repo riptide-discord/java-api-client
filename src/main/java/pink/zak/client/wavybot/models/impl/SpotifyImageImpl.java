@@ -1,7 +1,7 @@
 package pink.zak.client.wavybot.models.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import pink.zak.client.wavybot.models.SpotifyImage;
+import pink.zak.client.wavybot.models.spotify.SpotifyImage;
 
 public class SpotifyImageImpl implements SpotifyImage {
     private final int height;

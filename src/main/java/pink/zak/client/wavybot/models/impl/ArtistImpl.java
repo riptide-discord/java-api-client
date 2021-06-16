@@ -4,11 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pink.zak.client.wavybot.RiptideImpl;
-import pink.zak.client.wavybot.models.Artist;
-import pink.zak.client.wavybot.models.SpotifyImage;
+import pink.zak.client.wavybot.models.spotify.Artist;
+import pink.zak.client.wavybot.models.spotify.SpotifyImage;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 public class ArtistImpl implements Artist {

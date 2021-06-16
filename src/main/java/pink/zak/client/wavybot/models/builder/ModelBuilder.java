@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.NotNull;
-import pink.zak.client.wavybot.Riptide;
 import pink.zak.client.wavybot.RiptideImpl;
-import pink.zak.client.wavybot.models.Album;
-import pink.zak.client.wavybot.models.Artist;
+import pink.zak.client.wavybot.models.Tuple;
+import pink.zak.client.wavybot.models.spotify.Album;
+import pink.zak.client.wavybot.models.spotify.Artist;
 import pink.zak.client.wavybot.models.Task;
-import pink.zak.client.wavybot.models.Track;
+import pink.zak.client.wavybot.models.spotify.Track;
 import pink.zak.client.wavybot.models.User;
 import pink.zak.client.wavybot.models.WavyUser;
 import pink.zak.client.wavybot.models.impl.AlbumImpl;
@@ -19,18 +19,16 @@ import pink.zak.client.wavybot.models.impl.TrackImpl;
 import pink.zak.client.wavybot.models.impl.UserImpl;
 import pink.zak.client.wavybot.models.impl.WavyUserImpl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class ModelBuilder {
     @NotNull
     private final ObjectMapper objectMapper = new ObjectMapper();
     @NotNull
     private final RiptideImpl riptide;
+
+    public static final TypeReference<HashMap<Long, Tuple<String, Integer>>> LEADERBOARD_REFERENCE = new TypeReference<>(){};
 
     private static final TypeReference<UserImpl> USER_REFERENCE = new TypeReference<>(){};
     private static final TypeReference<WavyUserImpl> WAVY_USER_REFERENCE = new TypeReference<>(){};
@@ -48,11 +46,20 @@ public class ModelBuilder {
         this.riptide = riptide;
     }
 
+    public Map<Long, Tuple<String, Integer>> createLeaderboard(String body) {
+        try {
+            return this.objectMapper.readValue(body, LEADERBOARD_REFERENCE);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public User createUser(String body) {
         try {
             UserImpl user = this.objectMapper.readValue(body, USER_REFERENCE);
             user.setRiptide(this.riptide);
-            return this.objectMapper.readValue(body, USER_REFERENCE);
+            return user;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

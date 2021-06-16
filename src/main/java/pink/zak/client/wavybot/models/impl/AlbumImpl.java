@@ -6,21 +6,13 @@ import com.wrapper.spotify.enums.ReleaseDatePrecision;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pink.zak.client.wavybot.RiptideImpl;
-import pink.zak.client.wavybot.models.Album;
-import pink.zak.client.wavybot.models.Artist;
-import pink.zak.client.wavybot.models.SpotifyImage;
-import pink.zak.client.wavybot.models.Track;
-import pink.zak.client.wavybot.requests.Route;
-import pink.zak.client.wavybot.utils.Joiner;
-import pink.zak.client.wavybot.utils.RequestUtils;
+import pink.zak.client.wavybot.models.spotify.Album;
+import pink.zak.client.wavybot.models.spotify.SpotifyImage;
 
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 
 public class AlbumImpl implements Album {
     private final String id;

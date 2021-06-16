@@ -1,10 +1,12 @@
 package pink.zak.client.wavybot;
 
 import org.jetbrains.annotations.NotNull;
-import pink.zak.client.wavybot.models.Album;
-import pink.zak.client.wavybot.models.Artist;
+import pink.zak.client.wavybot.enums.Leaderboard;
+import pink.zak.client.wavybot.models.spotify.Album;
+import pink.zak.client.wavybot.models.spotify.Artist;
 import pink.zak.client.wavybot.models.Task;
-import pink.zak.client.wavybot.models.Track;
+import pink.zak.client.wavybot.models.spotify.Track;
+import pink.zak.client.wavybot.models.Tuple;
 import pink.zak.client.wavybot.models.User;
 import pink.zak.client.wavybot.models.WavyUser;
 
@@ -20,6 +22,10 @@ public interface Riptide {
 
     @NotNull
     String getUrl();
+
+    CompletableFuture<Map<Long, Tuple<String, Integer>>> retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard, long start, long end);
+
+    CompletableFuture<Map<Long, Tuple<String, Integer>>> retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard);
 
     @NotNull
     CompletableFuture<Album> retrieveAlbum(String spotifyId);

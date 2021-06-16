@@ -1,4 +1,4 @@
-package pink.zak.client.wavybot.models;
+package pink.zak.client.wavybot.models.spotify;
 
 public interface SpotifyImage {
 
