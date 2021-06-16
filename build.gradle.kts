@@ -15,6 +15,14 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
+}
+
 dependencies {
     implementation("org.jetbrains:annotations:16.0.2")
     annotationProcessor("org.jetbrains:annotations:16.0.2")
