@@ -1,8 +1,8 @@
 package pink.zak.client.wavybot.utils;
 
 import pink.zak.client.wavybot.Riptide;
-import pink.zak.client.wavybot.requests.config.QueryParameters;
 import pink.zak.client.wavybot.requests.Route;
+import pink.zak.client.wavybot.requests.config.QueryParameters;
 
 import java.net.URI;
 import java.net.http.HttpRequest;

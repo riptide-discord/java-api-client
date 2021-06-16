@@ -19,6 +19,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class RiptideImpl implements Riptide {
@@ -38,7 +39,7 @@ public class RiptideImpl implements Riptide {
         Riptide riptide = RiptideBuilder.create("http://localhost:8080", "admin", "admin")
                 .build();
 
-        riptide.updateListens(240721111174610945L).thenAccept(System.out::println).join();
+        riptide.retrievePartialLeaderboard(240721111174610945L, Leaderboard.PERSONAL_TRACKS).thenAccept(System.out::println).join();
     }
 
     @NotNull
@@ -59,6 +60,7 @@ public class RiptideImpl implements Riptide {
     }
 
     @Override
+    @NotNull
     public CompletableFuture<Map<Long, Tuple<String, Integer>>> retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard, long start, long end) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Leaderboards.GET_PARTIAL_LEADERBOARD, query -> query
                         .addParameter("leaderboard", leaderboard)
@@ -69,6 +71,7 @@ public class RiptideImpl implements Riptide {
     }
 
     @Override
+    @NotNull
     public CompletableFuture<Map<Long, Tuple<String, Integer>>> retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Leaderboards.GET_PARTIAL_LEADERBOARD, query -> query.addParameter("leaderboard", leaderboard), String.valueOf(discordId));
         return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createLeaderboard(response.body()));
@@ -117,6 +120,13 @@ public class RiptideImpl implements Riptide {
         String joinedIds = Joiner.join(spotifyIds, ",");
         HttpRequest request = RequestUtils.createRequest(this, Route.Spotify.GET_BULK_SPOTIFY_TRACK, parameters -> parameters.addParameter("ids", joinedIds));
         return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTracks(response.body()));
+    }
+
+    @Override
+    @NotNull
+    public CompletableFuture<Task> retrieveTask(@NotNull UUID taskId) {
+        HttpRequest request = RequestUtils.createRequest(this, Route.Tasks.GET_TASK, taskId.toString());
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTask(response.body()));
     }
 
     @Override
