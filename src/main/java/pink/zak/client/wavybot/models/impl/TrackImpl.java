@@ -77,11 +77,6 @@ public class TrackImpl implements Track {
     }
 
     @Override
-    public @NotNull CompletableFuture<Album> retrieveAlbum() {
-        return null;
-    }
-
-    @Override
     public @NotNull Set<String> getArtistIds() {
         return this.artistIds;
     }

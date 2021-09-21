@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import pink.zak.client.wavybot.RiptideImpl;
 import pink.zak.client.wavybot.models.User;
 import pink.zak.client.wavybot.models.WavyUser;
+import pink.zak.client.wavybot.requests.ApiResponse;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -40,11 +41,6 @@ public class UserImpl implements User {
     @NotNull
     public UUID getWavyUuid() {
         return this.wavyUuid;
-    }
-
-    @Override
-    public @NotNull CompletableFuture<WavyUser> retrieveWavyUser() {
-        return null;
     }
 
     @Override

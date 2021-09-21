@@ -1,5 +1,5 @@
 plugins {
-    java
+    `java-library`
     `maven-publish`
 }
 
@@ -26,5 +26,5 @@ publishing {
 dependencies {
     implementation("org.jetbrains:annotations:16.0.2")
     annotationProcessor("org.jetbrains:annotations:16.0.2")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.12.3")
+    api("com.fasterxml.jackson.core:jackson-databind:2.12.3")
 }

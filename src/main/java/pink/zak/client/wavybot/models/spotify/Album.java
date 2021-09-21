@@ -5,6 +5,9 @@ import com.wrapper.spotify.enums.ReleaseDatePrecision;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pink.zak.client.wavybot.Riptide;
+import pink.zak.client.wavybot.enums.RiptideStatusCode;
+import pink.zak.client.wavybot.models.FailureResponse;
+import pink.zak.client.wavybot.requests.ApiResponse;
 
 import java.util.Collection;
 import java.util.Date;
@@ -12,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public interface Album {
 
@@ -26,9 +30,9 @@ public interface Album {
     @NotNull
     Set<String> getArtistIds();
 
-    @NotNull
-    default CompletableFuture<Collection<? extends Artist>> retrieveArtists() {
-        return this.getRiptide().retrieveBulkArtists(this.getArtistIds()).thenApply(Map::values);
+    default void retrieveArtists(Consumer<Collection<? extends Artist>> successConsumer, Consumer<FailureResponse> failureConsumer) {
+        Consumer<Map<String, ? extends Artist>> consumer = map -> successConsumer.accept(map.values());
+        this.getRiptide().retrieveBulkArtists(this.getArtistIds(), consumer, failureConsumer);
     }
 
     @NotNull
@@ -57,14 +61,13 @@ public interface Album {
     List<String> getTrackIds();
 
     /**
-     * @return Future of the fetched {@link Track} models from the API
      * @throws IllegalStateException if trackIds is null
      */
-    @NotNull
-    default CompletableFuture<Collection<? extends Track>> retrieveTracks() throws IllegalStateException {
+    default void retrieveTracks(Consumer<Collection<? extends Track>> successConsumer, Consumer<FailureResponse> failureConsumer) throws IllegalStateException {
         if (this.getTrackIds() == null)
             throw new IllegalStateException("retrieveTracks cannot be called if trackIds is null");
 
-        return this.getRiptide().retrieveBulkTracks(this.getTrackIds()).thenApply(Map::values);
+        Consumer<Map<String, ? extends Track>> consumer = map -> successConsumer.accept(map.values());
+        this.getRiptide().retrieveBulkTracks(this.getArtistIds(), consumer, failureConsumer);
     }
 }

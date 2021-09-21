@@ -2,15 +2,18 @@ package pink.zak.client.wavybot.models.builder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.NotNull;
 import pink.zak.client.wavybot.RiptideImpl;
+import pink.zak.client.wavybot.models.FailureResponse;
 import pink.zak.client.wavybot.models.Task;
 import pink.zak.client.wavybot.models.Tuple;
 import pink.zak.client.wavybot.models.User;
 import pink.zak.client.wavybot.models.WavyUser;
 import pink.zak.client.wavybot.models.impl.AlbumImpl;
 import pink.zak.client.wavybot.models.impl.ArtistImpl;
+import pink.zak.client.wavybot.models.impl.FailureResponseImpl;
 import pink.zak.client.wavybot.models.impl.TaskImpl;
 import pink.zak.client.wavybot.models.impl.TrackImpl;
 import pink.zak.client.wavybot.models.impl.UserImpl;
@@ -24,9 +27,11 @@ import java.util.Map;
 
 public class ModelBuilder {
     @NotNull
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     @NotNull
     private final RiptideImpl riptide;
+
+    public static final TypeReference<FailureResponseImpl> FAILURE_RESPONSE_REFERENCE = new TypeReference<>() {};
 
     public static final TypeReference<HashMap<Long, Tuple<String, Integer>>> LEADERBOARD_REFERENCE = new TypeReference<>(){};
 
@@ -46,9 +51,18 @@ public class ModelBuilder {
         this.riptide = riptide;
     }
 
+    public static FailureResponse createFailureResponse(String body) {
+        try {
+            return OBJECT_MAPPER.readValue(body, FAILURE_RESPONSE_REFERENCE);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public Map<Long, Tuple<String, Integer>> createLeaderboard(String body) {
         try {
-            return this.objectMapper.readValue(body, LEADERBOARD_REFERENCE);
+            return OBJECT_MAPPER.readValue(body, LEADERBOARD_REFERENCE);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -57,7 +71,7 @@ public class ModelBuilder {
 
     public User createUser(String body) {
         try {
-            UserImpl user = this.objectMapper.readValue(body, USER_REFERENCE);
+            UserImpl user = OBJECT_MAPPER.readValue(body, USER_REFERENCE);
             user.setRiptide(this.riptide);
             return user;
         } catch (JsonProcessingException e) {
@@ -68,7 +82,7 @@ public class ModelBuilder {
 
     public WavyUser createWavyUser(String body) {
         try {
-            WavyUserImpl wavyUser = this.objectMapper.readValue(body, WAVY_USER_REFERENCE);
+            WavyUserImpl wavyUser = OBJECT_MAPPER.readValue(body, WAVY_USER_REFERENCE);
             wavyUser.setRiptide(this.riptide);
             return wavyUser;
         } catch (JsonProcessingException e) {
@@ -79,7 +93,7 @@ public class ModelBuilder {
 
     public Task createTask(String body) {
         try {
-            TaskImpl task = this.objectMapper.readValue(body, TASK_REFERENCE);
+            TaskImpl task = OBJECT_MAPPER.readValue(body, TASK_REFERENCE);
             task.setRiptide(this.riptide);
             return task;
         } catch (JsonProcessingException e) {
@@ -90,7 +104,7 @@ public class ModelBuilder {
 
     public Album createAlbum(String body) {
         try {
-            AlbumImpl album = this.objectMapper.readValue(body, ALBUM_REFERENCE);
+            AlbumImpl album = OBJECT_MAPPER.readValue(body, ALBUM_REFERENCE);
             album.setRiptide(this.riptide);
             return album;
         } catch (JsonProcessingException e) {
@@ -101,7 +115,7 @@ public class ModelBuilder {
 
     public Artist createArtist(String body) {
         try {
-            ArtistImpl artist = this.objectMapper.readValue(body, ARTIST_REFERENCE);
+            ArtistImpl artist = OBJECT_MAPPER.readValue(body, ARTIST_REFERENCE);
             artist.setRiptide(this.riptide);
             return artist;
         } catch (JsonProcessingException e) {
@@ -112,7 +126,7 @@ public class ModelBuilder {
 
     public Track createTrack(String body) {
         try {
-            TrackImpl track = this.objectMapper.readValue(body, TRACK_REFERENCE);
+            TrackImpl track = OBJECT_MAPPER.readValue(body, TRACK_REFERENCE);
             track.setRiptide(this.riptide);
             return track;
         } catch (JsonProcessingException e) {
@@ -123,7 +137,7 @@ public class ModelBuilder {
 
     public Map<String, ? extends Album> createAlbums(String body) {
         try {
-            Map<String, AlbumImpl> albumMap = this.objectMapper.readValue(body, BULK_REQUEST_ALBUM_REFERENCE);
+            Map<String, AlbumImpl> albumMap = OBJECT_MAPPER.readValue(body, BULK_REQUEST_ALBUM_REFERENCE);
             albumMap.values().forEach(album -> album.setRiptide(this.riptide));
             return albumMap;
         } catch (JsonProcessingException e) {
@@ -135,7 +149,7 @@ public class ModelBuilder {
 
     public Map<String, ? extends Artist> createArtists(String body) {
         try {
-            Map<String, ArtistImpl> artistMap = this.objectMapper.readValue(body, BULK_REQUEST_ARTIST_REFERENCE);
+            Map<String, ArtistImpl> artistMap = OBJECT_MAPPER.readValue(body, BULK_REQUEST_ARTIST_REFERENCE);
             artistMap.values().forEach(artist -> artist.setRiptide(this.riptide));
             return artistMap;
         } catch (JsonProcessingException e) {
@@ -146,7 +160,7 @@ public class ModelBuilder {
 
     public Map<String, ? extends Track> createTracks(String body) {
         try {
-            Map<String, TrackImpl> trackMap = this.objectMapper.readValue(body, BULK_REQUEST_TRACK_REFERENCE);
+            Map<String, TrackImpl> trackMap = OBJECT_MAPPER.readValue(body, BULK_REQUEST_TRACK_REFERENCE);
             trackMap.values().forEach(track -> track.setRiptide(this.riptide));
             return trackMap;
         } catch (JsonProcessingException e) {

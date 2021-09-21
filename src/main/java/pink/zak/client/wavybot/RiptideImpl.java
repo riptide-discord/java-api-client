@@ -2,6 +2,7 @@ package pink.zak.client.wavybot;
 
 import org.jetbrains.annotations.NotNull;
 import pink.zak.client.wavybot.enums.Leaderboard;
+import pink.zak.client.wavybot.models.FailureResponse;
 import pink.zak.client.wavybot.models.Task;
 import pink.zak.client.wavybot.models.Tuple;
 import pink.zak.client.wavybot.models.User;
@@ -10,6 +11,7 @@ import pink.zak.client.wavybot.models.builder.ModelBuilder;
 import pink.zak.client.wavybot.models.spotify.Album;
 import pink.zak.client.wavybot.models.spotify.Artist;
 import pink.zak.client.wavybot.models.spotify.Track;
+import pink.zak.client.wavybot.requests.ApiResponse;
 import pink.zak.client.wavybot.requests.Route;
 import pink.zak.client.wavybot.utils.Joiner;
 import pink.zak.client.wavybot.utils.RequestUtils;
@@ -21,6 +23,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class RiptideImpl implements Riptide {
     @NotNull
@@ -32,14 +35,14 @@ public class RiptideImpl implements Riptide {
 
     public RiptideImpl(@NotNull HttpClient httpClient, @NotNull String url) {
         this.httpClient = httpClient;
-        this.url = url;
+        this.url = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
     }
 
     public static void main(String... args) {
         Riptide riptide = RiptideBuilder.create("http://localhost:8080", "admin", "admin")
-                .build();
+            .build();
 
-        riptide.retrievePartialLeaderboard(240721111174610945L, Leaderboard.PERSONAL_TRACKS).thenAccept(System.out::println).join();
+        riptide.retrievePartialLeaderboard(240721111174610945L, Leaderboard.PERSONAL_TRACKS, System.out::println, null);
     }
 
     @NotNull
@@ -60,100 +63,101 @@ public class RiptideImpl implements Riptide {
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<Map<Long, Tuple<String, Integer>>> retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard, long start, long end) {
+    public void retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard, long start, long end,
+                                           Consumer<Map<Long, Tuple<String, Integer>>> successConsumer, Consumer<FailureResponse> failureConsumer) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Leaderboards.GET_PARTIAL_LEADERBOARD, query -> query
-                        .addParameter("leaderboard", leaderboard)
-                        .addParameter("start", start)
-                        .addParameter("end", end), String.valueOf(discordId));
+            .addParameter("leaderboard", leaderboard)
+            .addParameter("start", start)
+            .addParameter("end", end), String.valueOf(discordId));
 
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createLeaderboard(response.body()));
+        CompletableFuture<HttpResponse<String>> responseFuture = this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        new ApiResponse<>(responseFuture, response -> this.modelBuilder.createLeaderboard(response.body()), successConsumer, failureConsumer);
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<Map<Long, Tuple<String, Integer>>> retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard) {
+    public void retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard, Consumer<Map<Long, Tuple<String, Integer>>> successConsumer, Consumer<FailureResponse> failureConsumer) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Leaderboards.GET_PARTIAL_LEADERBOARD, query -> query.addParameter("leaderboard", leaderboard), String.valueOf(discordId));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createLeaderboard(response.body()));
+        CompletableFuture<HttpResponse<String>> responseFuture = this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        new ApiResponse<>(responseFuture, response -> this.modelBuilder.createLeaderboard(response.body()), successConsumer, failureConsumer);
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<Album> retrieveAlbum(String spotifyId) {
+    public void retrieveAlbum(String spotifyId, Consumer<Album> successConsumer, Consumer<FailureResponse> failureConsumer) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Spotify.GET_SPOTIFY_ALBUM, query -> query.addParameter("id", spotifyId));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createAlbum(response.body()));
+        CompletableFuture<HttpResponse<String>> responseFuture = this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        new ApiResponse<>(responseFuture, response -> this.modelBuilder.createAlbum(response.body()), successConsumer, failureConsumer);
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<Map<String, ? extends Album>> retrieveBulkAlbums(Collection<String> spotifyIds) {
+    public void retrieveBulkAlbums(Collection<String> spotifyIds, Consumer<Map<String, ? extends Album>> successConsumer, Consumer<FailureResponse> failureConsumer) {
         String joinedIds = Joiner.join(spotifyIds, ",");
         HttpRequest request = RequestUtils.createRequest(this, Route.Spotify.GET_BULK_SPOTIFY_ALBUM, parameters -> parameters.addParameter("ids", joinedIds));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createAlbums(response.body()));
+        CompletableFuture<HttpResponse<String>> responseFuture = this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        new ApiResponse<>(responseFuture, response -> this.modelBuilder.createAlbums(response.body()), successConsumer, failureConsumer);
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<Artist> retrieveArtist(String spotifyId) {
+    public void retrieveArtist(String spotifyId, Consumer<Artist> successConsumer, Consumer<FailureResponse> failureConsumer) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Spotify.GET_SPOTIFY_ARTIST, query -> query.addParameter("id", spotifyId));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createArtist(response.body()));
+        CompletableFuture<HttpResponse<String>> responseFuture = this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        new ApiResponse<>(responseFuture, response -> this.modelBuilder.createArtist(response.body()), successConsumer, failureConsumer);
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<Map<String, ? extends Artist>> retrieveBulkArtists(Collection<String> spotifyIds) {
+    public void retrieveBulkArtists(Collection<String> spotifyIds, Consumer<Map<String, ? extends Artist>> successConsumer, Consumer<FailureResponse> failureConsumer) {
         String joinedIds = Joiner.join(spotifyIds, ",");
         HttpRequest request = RequestUtils.createRequest(this, Route.Spotify.GET_BULK_SPOTIFY_ARTIST, parameters -> parameters.addParameter("ids", joinedIds));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createArtists(response.body()));
+        CompletableFuture<HttpResponse<String>> responseFuture = this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        new ApiResponse<>(responseFuture, response -> this.modelBuilder.createArtists(response.body()), successConsumer, failureConsumer);
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<Track> retrieveTrack(String spotifyId) {
+    public void retrieveTrack(String spotifyId, Consumer<Track> successConsumer, Consumer<FailureResponse> failureConsumer) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Spotify.GET_SPOTIFY_TRACK, query -> query.addParameter("id", spotifyId));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTrack(response.body()));
+        CompletableFuture<HttpResponse<String>> responseFuture = this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        new ApiResponse<>(responseFuture, response -> this.modelBuilder.createTrack(response.body()), successConsumer, failureConsumer);
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<Map<String, ? extends Track>> retrieveBulkTracks(Collection<String> spotifyIds) {
+    public void retrieveBulkTracks(Collection<String> spotifyIds, Consumer<Map<String, ? extends Track>> successConsumer, Consumer<FailureResponse> failureConsumer) {
         String joinedIds = Joiner.join(spotifyIds, ",");
         HttpRequest request = RequestUtils.createRequest(this, Route.Spotify.GET_BULK_SPOTIFY_TRACK, parameters -> parameters.addParameter("ids", joinedIds));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTracks(response.body()));
+        CompletableFuture<HttpResponse<String>> responseFuture = this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        new ApiResponse<>(responseFuture, response -> this.modelBuilder.createTracks(response.body()), successConsumer, failureConsumer);
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<Task> retrieveTask(@NotNull UUID taskId) {
+    public void retrieveTask(@NotNull UUID taskId, Consumer<Task> successConsumer, Consumer<FailureResponse> failureConsumer) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Tasks.GET_TASK, taskId.toString());
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTask(response.body()));
+        CompletableFuture<HttpResponse<String>> responseFuture = this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        new ApiResponse<>(responseFuture, response -> this.modelBuilder.createTask(response.body()), successConsumer, failureConsumer);
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<User> retrieveUser(long discordId) {
+    public void retrieveUser(long discordId, Consumer<User> successConsumer, Consumer<FailureResponse> failureConsumer) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Users.GET_USER, String.valueOf(discordId));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createUser(response.body()));
+        CompletableFuture<HttpResponse<String>> responseFuture = this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        new ApiResponse<>(responseFuture, response -> this.modelBuilder.createUser(response.body()), successConsumer, failureConsumer);
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<WavyUser> retrieveWavyUser(long discordId) {
+    public void retrieveWavyUser(long discordId, Consumer<WavyUser> successConsumer, Consumer<FailureResponse> failureConsumer) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Users.GET_WAVY, String.valueOf(discordId));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createWavyUser(response.body()));
+        CompletableFuture<HttpResponse<String>> responseFuture = this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        new ApiResponse<>(responseFuture, response -> this.modelBuilder.createWavyUser(response.body()), successConsumer, failureConsumer);
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<Task> linkWavy(long discordId, @NotNull String wavyUsername) {
+    public void linkWavy(long discordId, @NotNull String wavyUsername, Consumer<Task> successConsumer, Consumer<FailureResponse> failureConsumer) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Users.LINK_WAVY, query -> query.addParameter("wavyUsername", wavyUsername), String.valueOf(discordId));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTask(response.body()));
+        CompletableFuture<HttpResponse<String>> responseFuture = this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        new ApiResponse<>(responseFuture, response -> this.modelBuilder.createTask(response.body()), successConsumer, failureConsumer);
     }
 
     @Override
-    @NotNull
-    public CompletableFuture<Task> updateListens(long discordId) {
+    public void updateListens(long discordId, Consumer<Task> successConsumer, Consumer<FailureResponse> failureConsumer) {
         HttpRequest request = RequestUtils.createRequest(this, Route.Users.UPDATE_LISTENS, String.valueOf(discordId));
-        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> this.modelBuilder.createTask(response.body()));
+        CompletableFuture<HttpResponse<String>> responseFuture = this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+        new ApiResponse<>(responseFuture, response -> this.modelBuilder.createTask(response.body()), successConsumer, failureConsumer);
     }
 }

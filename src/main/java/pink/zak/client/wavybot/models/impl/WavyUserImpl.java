@@ -59,11 +59,6 @@ public class WavyUserImpl implements WavyUser {
     }
 
     @Override
-    public @NotNull CompletableFuture<User> retrieveUser() {
-        return null;
-    }
-
-    @Override
     @NotNull
     public String getUsername() {
         return this.username;

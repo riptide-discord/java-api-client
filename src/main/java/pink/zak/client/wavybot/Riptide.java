@@ -2,6 +2,8 @@ package pink.zak.client.wavybot;
 
 import org.jetbrains.annotations.NotNull;
 import pink.zak.client.wavybot.enums.Leaderboard;
+import pink.zak.client.wavybot.enums.RiptideStatusCode;
+import pink.zak.client.wavybot.models.FailureResponse;
 import pink.zak.client.wavybot.models.Task;
 import pink.zak.client.wavybot.models.Tuple;
 import pink.zak.client.wavybot.models.User;
@@ -14,7 +16,7 @@ import java.net.http.HttpClient;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public interface Riptide {
 
@@ -24,42 +26,30 @@ public interface Riptide {
     @NotNull
     String getUrl();
 
-    @NotNull
-    CompletableFuture<Map<Long, Tuple<String, Integer>>> retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard, long start, long end);
+    void retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard, long start, long end,
+                                    Consumer<Map<Long, Tuple<String, Integer>>> successConsumer, Consumer<FailureResponse> failureConsumer);
 
-    @NotNull
-    CompletableFuture<Map<Long, Tuple<String, Integer>>> retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard);
+    void retrievePartialLeaderboard(long discordId, @NotNull Leaderboard leaderboard, Consumer<Map<Long, Tuple<String, Integer>>> successConsumer, Consumer<FailureResponse> failureConsumer);
 
-    @NotNull
-    CompletableFuture<Album> retrieveAlbum(String spotifyId);
+    void retrieveAlbum(String spotifyId, Consumer<Album> successConsumer, Consumer<FailureResponse> failureConsumer);
 
-    @NotNull
-    CompletableFuture<Map<String, ? extends Album>> retrieveBulkAlbums(Collection<String> SpotifyIds);
+    void retrieveBulkAlbums(Collection<String> SpotifyIds, Consumer<Map<String, ? extends Album>> successConsumer, Consumer<FailureResponse> failureConsumer);
 
-    @NotNull
-    CompletableFuture<Artist> retrieveArtist(String spotifyId);
+    void retrieveArtist(String spotifyId, Consumer<Artist> successConsumer, Consumer<FailureResponse> failureConsumer);
 
-    @NotNull
-    CompletableFuture<Map<String, ? extends Artist>> retrieveBulkArtists(Collection<String> SpotifyIds);
+    void retrieveBulkArtists(Collection<String> SpotifyIds, Consumer<Map<String, ? extends Artist>> successConsumer, Consumer<FailureResponse> failureConsumer);
 
-    @NotNull
-    CompletableFuture<Track> retrieveTrack(String spotifyId);
+    void retrieveTrack(String spotifyId, Consumer<Track> successConsumer, Consumer<FailureResponse> failureConsumer);
 
-    @NotNull
-    CompletableFuture<Map<String, ? extends Track>> retrieveBulkTracks(Collection<String> SpotifyIds);
+    void retrieveBulkTracks(Collection<String> SpotifyIds, Consumer<Map<String, ? extends Track>> successConsumer, Consumer<FailureResponse> failureConsumer);
 
-    @NotNull
-    CompletableFuture<Task> retrieveTask(@NotNull UUID taskId);
+    void retrieveTask(@NotNull UUID taskId, Consumer<Task> successConsumer, Consumer<FailureResponse> failureConsumer);
 
-    @NotNull
-    CompletableFuture<User> retrieveUser(long discordId);
+    void retrieveUser(long discordId, Consumer<User> successConsumer, Consumer<FailureResponse> failureConsumer);
 
-    @NotNull
-    CompletableFuture<WavyUser> retrieveWavyUser(long discordId);
+    void retrieveWavyUser(long discordId, Consumer<WavyUser> successConsumer, Consumer<FailureResponse> failureConsumer);
 
-    @NotNull
-    CompletableFuture<Task> linkWavy(long discordId, @NotNull String wavyUsername);
+    void linkWavy(long discordId, @NotNull String wavyUsername, Consumer<Task> successConsumer, Consumer<FailureResponse> failureConsumer);
 
-    @NotNull
-    CompletableFuture<Task> updateListens(long discordId);
+    void updateListens(long discordId, Consumer<Task> successConsumer, Consumer<FailureResponse> failureConsumer);
 }
